@@ -1,0 +1,101 @@
+group 'org.joeyderuiter'
+version '1.0'
+
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+apply plugin: "java"
+apply plugin: "application"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "idea"
+
+// Set UTF-8 standard
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+mainClassName = 'ipwrc.IpwrcApplication'
+
+sourceCompatibility = 1.8
+
+// Project variables
+project.ext {
+    junitVersion = "5.1.0"
+    dropwizardVersion = "1.3.5"
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+    }
+}
+
+dependencies {
+    // junit5, testing framework
+    testImplementation "org.junit.jupiter:junit-jupiter-params:" + junitVersion
+    testImplementation "org.junit.jupiter:junit-jupiter-api:" + junitVersion
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:" + junitVersion
+
+    // DropWizard
+    compile 'io.dropwizard:dropwizard-core:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-db:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-auth:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-forms:' + dropwizardVersion
+    compile 'io.dropwizard-bundles:dropwizard-configurable-assets-bundle:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-assets:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-hibernate:' + dropwizardVersion
+    compile 'io.dropwizard:dropwizard-migrations:' + dropwizardVersion
+
+    // DropWizard bundle for SPA (Single page app)
+    compile group: 'com.palantir.indexpage', name: 'dropwizard-index-page', version: '1.2.0'
+
+    // c3p0, JDBC pooling
+    compile 'c3p0:c3p0:0.9.1.2'
+
+    // postgres, jdbc connector for postgres
+    compile 'org.postgresql:postgresql:42.2.5'
+
+    // Add JBCrypt
+    compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
+
+    // Google Guava
+    compile 'com.google.guava:guava:27.0.1-jre'
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter', 'junit-vintage'
+    }
+}
+
+run {
+    args 'server', './src/main/config/application.yml'
+}
+
+wrapper {
+    gradleVersion = '4.10.1'
+}
+
+shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName 'ipwrc.jar'
+}

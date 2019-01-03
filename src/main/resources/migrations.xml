@@ -1,0 +1,104 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="1" author="Joey">
+        <createTable catalogName="albert_api" schemaName="public" tableName="users">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="username" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+        </createTable>
+        <createIndex catalogName="albert_api" indexName="users_username_uindex" schemaName="public" tableName="users" unique="true">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2" author="Joey">
+        <createTable tableName="roles">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="roles_pkey" />
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_roles">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="user_roles_pkey" />
+            </column>
+            <column name="fk_user" type="INTEGER(11)">
+                <constraints nullable="false" foreignKeyName="fk_user_roles_user" references="users(id)"/>
+            </column>
+            <column name="fk_role" type="INTEGER(11)">
+                <constraints nullable="false" foreignKeyName="fk_user_roles_role" references="roles(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="Joey">
+        <!-- Create an admin user -->
+        <insert tableName="users">
+            <column name="username" value="admin" />
+            <column name="password" value="admin" />
+            <column name="email" value="admin@example.com" />
+        </insert>
+
+        <!-- Create the default roles -->
+        <insert tableName="roles">
+            <column name="name">User</column>
+        </insert>
+
+        <insert tableName="roles">
+            <column name="name">Admin</column>
+        </insert>
+
+        <!-- Give the admin user all the roles -->
+        <insert tableName="user_roles">
+            <column name="fk_user">1</column>
+            <column name="fk_role">1</column>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="fk_user">1</column>
+            <column name="fk_role">2</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="4" author="Joey">
+        <update tableName="users">
+            <column
+                name="password"
+                type="VARCHAR(255)"
+                value="$2a$10$CGdrZyXNUjT4FPFq8QOC2esSs6T27zw.zXIz0zJz9H9GVpnbotNDm"
+            />
+            <where>username = 'admin'</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="5" author="Joey">
+        <createTable tableName="categories">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="categories_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(50)"/>
+            <column name="title" type="VARCHAR(50)"/>
+        </createTable>
+
+        <createTable tableName="subcategories">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="subcategories_pkey"/>
+            </column>
+            <column name="fk_category" type="INTEGER(11)">
+                <constraints nullable="false" foreignKeyName="fk_categories_subcategories" references="categories(id)"/>
+            </column>
+            <column name="name" type="VARCHAR(50)"/>
+            <column name="title" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

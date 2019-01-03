@@ -1,0 +1,47 @@
+application:
+  host: localhost
+
+database:
+  driverClass: org.postgresql.Driver
+  user: iprwc_api
+  password: iprwc_api
+  url: jdbc:postgresql://localhost:5432/iprwc_api
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+
+
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+    # Sets the level for 'com.example.app' to DEBUG.
+    main.app: DEBUG
+
+    # Redirects SQL logs to a separate file
+    org.hibernate.SQL:
+      level: DEBUG
+
+assets:
+  mappings:
+    /assets: /
+  overrides:
+    /: ../frontend/
+
+server:
+  applicationContextPath: /
+  rootPath: /api/*
+  adminContextPath: /admin/*
+  applicationConnectors:
+    - type: http
+      port: 8080
+
