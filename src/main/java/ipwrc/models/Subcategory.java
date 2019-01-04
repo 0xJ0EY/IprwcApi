@@ -8,6 +8,10 @@ import javax.persistence.*;
 
 @Entity(name = "Subcategory")
 @Table(name = "subcategories")
+@NamedQueries({
+    @NamedQuery(name = "Subcategory.getAll", query = "SELECT s FROM Subcategory s"),
+    @NamedQuery(name = "Subcategory.findByTitle", query = "SELECT c FROM Subcategory c WHERE c.title =:title")
+})
 public class Subcategory {
 
     @Id

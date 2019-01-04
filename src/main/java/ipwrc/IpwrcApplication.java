@@ -8,10 +8,12 @@ import ipwrc.bundles.ConfiguredMigrationBundle;
 import ipwrc.configurations.IpwrcConfiguration;
 import ipwrc.models.*;
 import ipwrc.persistence.CategoryDAO;
+import ipwrc.persistence.SubcategoryDAO;
 import ipwrc.persistence.UserDAO;
 import ipwrc.filters.CORSFilter;
 import ipwrc.resources.AuthResource;
 import ipwrc.resources.CategoryResource;
+import ipwrc.resources.SubcategoryResource;
 import ipwrc.resources.UserResource;
 import com.google.common.collect.ImmutableSet;
 import com.palantir.indexpage.IndexPageBundle;
@@ -25,6 +27,7 @@ import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import ipwrc.services.CategoryService;
+import ipwrc.services.SubcategoryService;
 import ipwrc.services.UserService;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
@@ -39,7 +42,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         Subcategory.class
     );
 
-    private enum DaoName { USER, CATEGORY }
+    private enum DaoName { USER, CATEGORY, SUBCATEGORY }
     private HashMap<DaoName, AbstractDAO> daos = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -81,6 +84,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
     private void setupDaos(Environment environment) {
         this.daos.put(DaoName.USER, new UserDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.CATEGORY, new CategoryDAO(this.userHibernateBundle.getSessionFactory()));
+        this.daos.put(DaoName.SUBCATEGORY, new SubcategoryDAO(this.userHibernateBundle.getSessionFactory()));
     }
 
     private void setupAuthentication(Environment environment) {
@@ -103,10 +107,12 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         // Create services for the resources
         UserService userService = new UserService((UserDAO) this.daos.get(DaoName.USER));
         CategoryService categoryService = new CategoryService((CategoryDAO) this.daos.get(DaoName.CATEGORY));
+        SubcategoryService subcategoryService = new SubcategoryService((SubcategoryDAO) this.daos.get(DaoName.SUBCATEGORY));
 
         // Register the resources
         environment.jersey().register(new AuthResource(userService));
         environment.jersey().register(new UserResource(userService));
         environment.jersey().register(new CategoryResource(categoryService));
+        environment.jersey().register(new SubcategoryResource(subcategoryService));
     }
 }
