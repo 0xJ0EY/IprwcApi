@@ -11,7 +11,8 @@ import java.util.Set;
 @Entity(name = "Category")
 @Table(name = "categories")
 @NamedQueries({
-    @NamedQuery(name = "Category.getAll", query = "SELECT p FROM Category p")
+    @NamedQuery(name = "Category.getAll", query = "SELECT p FROM Category p"),
+    @NamedQuery(name = "Category.findByTitle", query = "SELECT c FROM Category c WHERE c.title =:title")
 })
 public class Category {
 

@@ -24,6 +24,8 @@ import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import ipwrc.services.CategoryService;
+import ipwrc.services.UserService;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import java.util.HashMap;
@@ -98,8 +100,13 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
     }
 
     private void setupResources(Environment environment) {
-        environment.jersey().register(new AuthResource((UserDAO) this.daos.get(DaoName.USER)));
-        environment.jersey().register(new UserResource((UserDAO) this.daos.get(DaoName.USER)));
-        environment.jersey().register(new CategoryResource((CategoryDAO) this.daos.get(DaoName.CATEGORY)));
+        // Create services for the resources
+        UserService userService = new UserService((UserDAO) this.daos.get(DaoName.USER));
+        CategoryService categoryService = new CategoryService((CategoryDAO) this.daos.get(DaoName.CATEGORY));
+
+        // Register the resources
+        environment.jersey().register(new AuthResource(userService));
+        environment.jersey().register(new UserResource(userService));
+        environment.jersey().register(new CategoryResource(categoryService));
     }
 }

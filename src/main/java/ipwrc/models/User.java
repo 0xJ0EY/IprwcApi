@@ -76,4 +76,12 @@ public class User implements Principal {
 
         return false;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof User))
+            return false;
+
+        return ((User) object).id == this.id;
+    }
 }

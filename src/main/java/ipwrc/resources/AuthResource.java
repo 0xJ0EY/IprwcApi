@@ -1,7 +1,7 @@
 package ipwrc.resources;
 
 import ipwrc.models.User;
-import ipwrc.persistence.UserDAO;
+import ipwrc.services.UserService;
 import ipwrc.views.View;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -11,17 +11,16 @@ import org.mindrot.jbcrypt.BCrypt;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Optional;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
-    private UserDAO dao;
+    private UserService service;
 
     @Inject
-    public AuthResource(UserDAO dao) {
-        this.dao = dao ;
+    public AuthResource(UserService service) {
+        this.service = service;
     }
 
     @POST
@@ -29,15 +28,10 @@ public class AuthResource {
     @Path("/login")
     @JsonView(View.Private.class)
     public User login(@FormDataParam("username") String username, @FormDataParam("password") String password) {
-        Optional<User> user = this.dao.findUserByUsername(username);
+        User user = this.service.findUserByUsername(username);
 
-        if ( ! user.isPresent())
-            throw new NotFoundException();
-
-        User auth = user.get();
-
-        if (BCrypt.checkpw(password, auth.getPassword())) {
-            return auth;
+        if (BCrypt.checkpw(password, user.getPassword())) {
+            return user;
         } else {
             throw new NotFoundException();
         }

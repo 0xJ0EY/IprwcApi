@@ -3,6 +3,7 @@ package ipwrc.resources;
 
 import ipwrc.models.User;
 import ipwrc.persistence.UserDAO;
+import ipwrc.services.UserService;
 import ipwrc.views.View;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.auth.Auth;
@@ -21,11 +22,11 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
 
-    private UserDAO dao;
+    private UserService service;
 
     @Inject
-    public UserResource(UserDAO dao) {
-         this.dao = dao ;
+    public UserResource(UserService service) {
+         this.service = service;
     }
 
     @GET
@@ -34,7 +35,7 @@ public class UserResource {
     @JsonView(View.Public.class)
     @UnitOfWork
     public List<User> all() {
-        return dao.getAll();
+        return this.service.getAll();
     }
 
     @GET
@@ -43,12 +44,7 @@ public class UserResource {
     @JsonView(View.Public.class)
     @UnitOfWork
     public User show(@PathParam("id") int id) {
-        Optional<User> user = dao.findById(id);
-
-        if (! user.isPresent())
-            throw new NotFoundException();
-
-        return user.get();
+        return this.service.findById(id);
     }
 
     @GET

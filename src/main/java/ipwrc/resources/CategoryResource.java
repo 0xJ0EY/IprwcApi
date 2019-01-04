@@ -3,16 +3,12 @@ package ipwrc.resources;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.hibernate.UnitOfWork;
 import ipwrc.models.Category;
-import ipwrc.models.User;
-import ipwrc.persistence.CategoryDAO;
-import ipwrc.persistence.UserDAO;
+import ipwrc.services.CategoryService;
 import ipwrc.views.View;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -21,11 +17,11 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class CategoryResource {
 
-    private CategoryDAO dao;
+    private CategoryService service;
 
     @Inject
-    public CategoryResource(CategoryDAO dao) {
-        this.dao = dao ;
+    public CategoryResource(CategoryService service) {
+        this.service = service;
     }
 
     @GET
@@ -33,7 +29,15 @@ public class CategoryResource {
     @JsonView(View.Public.class)
     @UnitOfWork
     public List<Category> all() {
-        return dao.getAll();
+        return service.getAll();
+    }
+
+    @GET
+    @Path("/{category}")
+    @JsonView(View.Public.class)
+    @UnitOfWork
+    public Category category(@PathParam("category") String title) {
+        return service.findByTitle(title);
     }
 
 }
