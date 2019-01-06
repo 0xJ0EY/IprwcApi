@@ -39,7 +39,9 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         User.class,
         Role.class,
         Category.class,
-        Subcategory.class
+        Subcategory.class,
+        Product.class,
+        ProductImage.class
     );
 
     private enum DaoName { USER, CATEGORY, SUBCATEGORY }

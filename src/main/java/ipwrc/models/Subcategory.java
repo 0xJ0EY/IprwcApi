@@ -5,6 +5,8 @@ import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Subcategory")
 @Table(name = "subcategories")
@@ -29,5 +31,12 @@ public class Subcategory {
     @Column(name = "title", nullable = false)
     @JsonView(View.Public.class)
     private String title;
+
+    @OneToMany
+    @JoinColumn(name = "fk_subcategory")
+    @OrderBy("id ASC")
+    @JsonView(View.Private.class)
+    private Set<Product> products = new HashSet<>();
+
 
 }
