@@ -1,6 +1,7 @@
 package ipwrc.services;
 
 import ipwrc.models.User;
+import ipwrc.persistence.DAO;
 
 import javax.ws.rs.NotFoundException;
 

@@ -142,4 +142,20 @@
             <column name="path" type="VARCHAR(255)" />
         </createTable>
     </changeSet>
+
+    <changeSet id="7" author="Joey">
+        <addColumn tableName="product_images">
+            <column name="title" type="VARCHAR(50)">
+                <constraints unique="true" uniqueConstraintName="unique_product_images_title" />
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="product_images" columnNames="path" constraintName="unique_product_images_path"/>
+        <renameColumn tableName="product_images" oldColumnName="path" newColumnName="image_name"/>
+    </changeSet>
+
+    <changeSet id="8" author="Joey">
+        <addColumn tableName="product_images">
+            <column name="media_type" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

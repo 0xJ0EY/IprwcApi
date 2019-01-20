@@ -19,6 +19,9 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class SubcategoryResource {
 
+    public static class SubcategoryPublicView extends View.Public {}
+    public static class SubcategoryPrivateView extends View.Private {}
+
     private SubcategoryService service;
 
     public SubcategoryResource(SubcategoryService service) {
@@ -28,7 +31,7 @@ public class SubcategoryResource {
     @GET()
     @Path("/")
     @UnitOfWork
-    @JsonView(View.Public.class)
+    @JsonView(SubcategoryPublicView.class)
     public List<Subcategory> all() {
         return this.service.getAll();
     }
@@ -36,7 +39,7 @@ public class SubcategoryResource {
     @GET
     @Path("/{subcategory}")
     @UnitOfWork
-    @JsonView(View.Private.class)
+    @JsonView(SubcategoryPrivateView.class)
     public Subcategory subcategory(@PathParam("subcategory") String title) {
         return this.service.findByTitle(title);
     }

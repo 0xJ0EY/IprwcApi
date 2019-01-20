@@ -1,6 +1,7 @@
 package ipwrc.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import ipwrc.resources.CategoryResource;
 import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -34,7 +35,7 @@ public class Category {
 
     @OneToMany
     @JoinColumn(name = "fk_category", nullable = true)
-    @JsonView(View.Public.class)
+    @JsonView(CategoryResource.CategoryPublicView.class)
     private Set<Subcategory> subcategories = new HashSet<>();
 
 }

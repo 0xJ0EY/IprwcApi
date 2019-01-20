@@ -1,5 +1,6 @@
 application:
   host: localhost
+  environment: development
 
 database:
   driverClass: org.postgresql.Driver
@@ -25,7 +26,7 @@ logging:
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
-    main.app: DEBUG
+    ipwrc.*: DEBUG
 
     # Redirects SQL logs to a separate file
     org.hibernate.SQL:

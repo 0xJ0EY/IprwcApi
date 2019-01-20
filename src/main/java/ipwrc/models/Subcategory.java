@@ -1,6 +1,10 @@
 package ipwrc.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import ipwrc.resources.SubcategoryResource;
 import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -14,13 +18,14 @@ import java.util.Set;
     @NamedQuery(name = "Subcategory.getAll", query = "SELECT s FROM Subcategory s"),
     @NamedQuery(name = "Subcategory.findByTitle", query = "SELECT c FROM Subcategory c WHERE c.title =:title")
 })
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Subcategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView(View.Internal.class)
-    private int id;
+    @JsonView(View.Public.class)
+    public int id;
 
     @NotEmpty
     @Column(name = "name", nullable = false)
@@ -32,10 +37,10 @@ public class Subcategory {
     @JsonView(View.Public.class)
     private String title;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_subcategory")
     @OrderBy("id ASC")
-    @JsonView(View.Private.class)
+    @JsonView(SubcategoryResource.SubcategoryPrivateView.class)
     private Set<Product> products = new HashSet<>();
 
 

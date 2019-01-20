@@ -1,6 +1,7 @@
 package ipwrc;
 
 import io.dropwizard.hibernate.AbstractDAO;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import ipwrc.auth.BasicAuthenticator;
 import ipwrc.auth.BasicAuthorizer;
 import ipwrc.bundles.ConfiguredHibernateBundle;
@@ -8,13 +9,11 @@ import ipwrc.bundles.ConfiguredMigrationBundle;
 import ipwrc.configurations.IpwrcConfiguration;
 import ipwrc.models.*;
 import ipwrc.persistence.CategoryDAO;
+import ipwrc.persistence.ProductDAO;
 import ipwrc.persistence.SubcategoryDAO;
 import ipwrc.persistence.UserDAO;
 import ipwrc.filters.CORSFilter;
-import ipwrc.resources.AuthResource;
-import ipwrc.resources.CategoryResource;
-import ipwrc.resources.SubcategoryResource;
-import ipwrc.resources.UserResource;
+import ipwrc.resources.*;
 import com.google.common.collect.ImmutableSet;
 import com.palantir.indexpage.IndexPageBundle;
 import io.dropwizard.Application;
@@ -27,6 +26,7 @@ import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import ipwrc.services.CategoryService;
+import ipwrc.services.ProductService;
 import ipwrc.services.SubcategoryService;
 import ipwrc.services.UserService;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -41,10 +41,11 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         Category.class,
         Subcategory.class,
         Product.class,
-        ProductImage.class
+        ProductImage.class,
+        Brand.class
     );
 
-    private enum DaoName { USER, CATEGORY, SUBCATEGORY }
+    private enum DaoName { USER, CATEGORY, SUBCATEGORY, PRODUCT }
     private HashMap<DaoName, AbstractDAO> daos = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -73,20 +74,29 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
                     Environment environment) throws Exception {
 
         // Do general setup
-        this.setupFilters(environment);
         this.setupDaos(environment);
         this.setupResources(environment);
         this.setupAuthentication(environment);
-    }
 
-    private void setupFilters(Environment environment) {
-        environment.jersey().register(new CORSFilter());
+        if (configuration.getApplicationConfiguration().isDevelopment()) {
+            this.setupDevelopmentEnvironment(environment);
+        }
     }
 
     private void setupDaos(Environment environment) {
         this.daos.put(DaoName.USER, new UserDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.CATEGORY, new CategoryDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.SUBCATEGORY, new SubcategoryDAO(this.userHibernateBundle.getSessionFactory()));
+        this.daos.put(DaoName.PRODUCT, new ProductDAO(this.userHibernateBundle.getSessionFactory()));
+    }
+
+    private void setupDevelopmentEnvironment(Environment environment) {
+
+        // Enable cors from everywhere
+        environment.jersey().register(new CORSFilter());
+
+        // Enable more JSON processing details
+        environment.jersey().register(new JsonProcessingExceptionMapper(true));
     }
 
     private void setupAuthentication(Environment environment) {
@@ -110,11 +120,13 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         UserService userService = new UserService((UserDAO) this.daos.get(DaoName.USER));
         CategoryService categoryService = new CategoryService((CategoryDAO) this.daos.get(DaoName.CATEGORY));
         SubcategoryService subcategoryService = new SubcategoryService((SubcategoryDAO) this.daos.get(DaoName.SUBCATEGORY));
+        ProductService productService = new ProductService((ProductDAO) this.daos.get(DaoName.PRODUCT));
 
         // Register the resources
         environment.jersey().register(new AuthResource(userService));
         environment.jersey().register(new UserResource(userService));
         environment.jersey().register(new CategoryResource(categoryService));
         environment.jersey().register(new SubcategoryResource(subcategoryService));
+        environment.jersey().register(new ProductResource(productService));
     }
 }

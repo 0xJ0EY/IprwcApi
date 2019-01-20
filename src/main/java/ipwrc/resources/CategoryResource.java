@@ -16,6 +16,7 @@ import java.util.List;
 @Path("/category/")
 @Produces(MediaType.APPLICATION_JSON)
 public class CategoryResource {
+    public static class CategoryPublicView extends View.Public {}
 
     private CategoryService service;
 
@@ -26,7 +27,7 @@ public class CategoryResource {
 
     @GET
     @Path("/")
-    @JsonView(View.Public.class)
+    @JsonView(CategoryPublicView.class)
     @UnitOfWork
     public List<Category> all() {
         return service.getAll();
@@ -34,7 +35,7 @@ public class CategoryResource {
 
     @GET
     @Path("/{category}")
-    @JsonView(View.Public.class)
+    @JsonView(CategoryPublicView.class)
     @UnitOfWork
     public Category category(@PathParam("category") String title) {
         return service.findByTitle(title);
