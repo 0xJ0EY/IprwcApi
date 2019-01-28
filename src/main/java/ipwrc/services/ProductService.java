@@ -1,14 +1,20 @@
 package ipwrc.services;
 
 import ipwrc.models.Product;
-import ipwrc.persistence.ProductDAO;
+import ipwrc.persistence.DAO;
+
+import javax.inject.Inject;
+import java.util.List;
 
 public class ProductService extends BaseService<Product> {
 
-    private ProductDAO dao;
+    @Inject
+    public ProductService(DAO<Product> dao) {
+        super(dao);
+    }
 
-    public ProductService(ProductDAO dao) {
-        this.dao = dao;
+    public List<Product> getAll() {
+        return this.dao.getAll();
     }
 
     public Product findById(int id) {
@@ -25,6 +31,8 @@ public class ProductService extends BaseService<Product> {
 
         // Check if it has a result, else throw an exception
         this.requireResult(product);
+
+        System.out.println("product = " + product);
 
         return product;
     }

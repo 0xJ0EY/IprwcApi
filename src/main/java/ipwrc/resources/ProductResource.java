@@ -4,15 +4,14 @@ package ipwrc.resources;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.hibernate.UnitOfWork;
 import ipwrc.models.Product;
-import ipwrc.models.Subcategory;
 import ipwrc.services.ProductService;
 import ipwrc.views.View;
 
 import javax.inject.Singleton;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Singleton
 @Path("/products/")
@@ -20,6 +19,7 @@ import javax.ws.rs.core.Response;
 public class ProductResource extends View.Public {
 
     public static class ProductPublicView extends View.Public {}
+    public static class ProductPrivateView extends View.Private {}
 
     private ProductService service;
 
@@ -30,6 +30,13 @@ public class ProductResource extends View.Public {
     @GET
     @UnitOfWork
     @JsonView(ProductPublicView.class)
+    public List<Product> get() {
+        return this.service.getAll();
+    }
+
+    @GET
+    @UnitOfWork
+    @JsonView(ProductPrivateView.class)
     @Path("/{title}/")
     public Product getByTitle(@PathParam("title") String title) {
         return this.service.findByTitle(title);
@@ -37,7 +44,7 @@ public class ProductResource extends View.Public {
 
     @GET
     @UnitOfWork
-    @JsonView(ProductPublicView.class)
+    @JsonView(ProductPrivateView.class)
     @Path("/id/{id}/")
     public Product getById(@PathParam("id") int id) {
         return this.service.findById(id);

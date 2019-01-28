@@ -1,6 +1,7 @@
 package ipwrc.services;
 
 import ipwrc.models.User;
+import ipwrc.persistence.DAO;
 import ipwrc.persistence.UserDAO;
 
 import javax.inject.Inject;
@@ -8,11 +9,9 @@ import java.util.List;
 
 public class UserService extends BaseService<User> {
 
-    private UserDAO dao;
-
     @Inject
-    public UserService(UserDAO dao) {
-        this.dao = dao;
+    public UserService(DAO<User> dao) {
+        super(dao);
     }
 
     public List<User> getAll() {
@@ -20,7 +19,7 @@ public class UserService extends BaseService<User> {
     }
 
     public User findById(int id) {
-        User user = this.dao.findById(id).get();
+        User user = this.dao.getById(id);
 
         this.requireResult(user);
 
@@ -28,7 +27,7 @@ public class UserService extends BaseService<User> {
     }
 
     public User findUserByUsername(String username) {
-        User user = this.dao.findUserByUsername(username).get();
+        User user = ((UserDAO)this.dao).getByUsername(username);
 
         this.requireResult(user);
 

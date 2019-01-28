@@ -46,14 +46,14 @@ public class Product {
         cascade = { CascadeType.MERGE, CascadeType.PERSIST }
     )
     @JoinColumn(name = "fk_brand")
-    @JsonView(ProductResource.ProductPublicView.class)
+    @JsonView(View.Public.class)
     private Brand brand;
 
-//    @OneToMany()
-//    @JoinColumn(name = "fk_product")
-//    @JsonView(View.Public.class)
-//    private List<ProductImage> images = new ArrayList<>();
-//
+    @OneToMany()
+    @JoinColumn(name = "fk_product")
+    @JsonView(ProductResource.ProductPrivateView.class)
+    private List<ProductImage> images = new ArrayList<>();
+
     @Column(name = "description")
     @JsonView(View.Public.class)
     private String description;

@@ -23,7 +23,8 @@ public class BasicAuthenticator implements Authenticator<BasicCredentials, User>
     @Override
     public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
 
-        Optional<User> user = this.dao.findUserByUsername(credentials.getUsername());
+        User u = this.dao.getByUsername(credentials.getUsername());
+        Optional<User> user = u != null ? Optional.of(u) : Optional.empty();
 
         // If there is no user found, give back an empty user
         if ( ! user.isPresent()) return Optional.empty();

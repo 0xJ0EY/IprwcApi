@@ -26,7 +26,7 @@ public class ProductDAO extends DAO<Product> {
             .setMaxResults(1)
         );
 
-        return products.get(0);
+        return products.size() > 0 ? products.get(0) : null;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ProductDAO extends DAO<Product> {
             .setMaxResults(1)
         );
 
-        return products.get(0);
+        return products.size() > 0 ? products.get(0) : null;
     }
 
     @Override

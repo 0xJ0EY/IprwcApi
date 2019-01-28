@@ -1,6 +1,5 @@
 package ipwrc.persistence;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import ipwrc.models.Category;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -8,7 +7,7 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.Optional;
 
-public class CategoryDAO extends AbstractDAO<Category> {
+public class CategoryDAO extends DAO<Category> {
 
     public CategoryDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -19,14 +18,15 @@ public class CategoryDAO extends AbstractDAO<Category> {
         return list((Query<Category>) namedQuery("Category.getAll"));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public Optional<Category> findByTitle(String name) {
+    public Category getByTitle(String title) {
         List<Category> categories = list((Query<Category>) namedQuery("Category.findByTitle")
-            .setParameter("title", name.toLowerCase())
+            .setParameter("title", title.toLowerCase())
             .setMaxResults(1)
         );
 
-        return Optional.ofNullable(categories.size() > 0 ? categories.get(0) : null);
+        return categories.size() > 0 ? categories.get(0) : null;
     }
 
 }

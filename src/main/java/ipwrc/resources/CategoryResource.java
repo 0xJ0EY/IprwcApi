@@ -26,7 +26,6 @@ public class CategoryResource {
     }
 
     @GET
-    @Path("/")
     @JsonView(CategoryPublicView.class)
     @UnitOfWork
     public List<Category> all() {

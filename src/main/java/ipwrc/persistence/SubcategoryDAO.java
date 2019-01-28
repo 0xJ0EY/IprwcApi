@@ -1,6 +1,5 @@
 package ipwrc.persistence;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import ipwrc.models.Subcategory;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -8,7 +7,7 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.Optional;
 
-public class SubcategoryDAO extends AbstractDAO<Subcategory> {
+public class SubcategoryDAO extends DAO<Subcategory> {
 
     public SubcategoryDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -19,14 +18,15 @@ public class SubcategoryDAO extends AbstractDAO<Subcategory> {
         return list((Query<Subcategory>) namedQuery("Subcategory.getAll"));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public Optional<Subcategory> findByTitle(String name) {
+    public Subcategory getByTitle(String name) {
         List<Subcategory> categories = list((Query<Subcategory>) namedQuery("Subcategory.findByTitle")
-                .setParameter("title", name.toLowerCase())
-                .setMaxResults(1)
+            .setParameter("title", name.toLowerCase())
+            .setMaxResults(1)
         );
 
-        return Optional.ofNullable(categories.size() > 0 ? categories.get(0) : null);
+        return categories.size() > 0 ? categories.get(0) : null;
     }
 
 }

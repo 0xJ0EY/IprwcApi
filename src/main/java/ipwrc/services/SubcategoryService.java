@@ -1,19 +1,16 @@
 package ipwrc.services;
 
 import ipwrc.models.Subcategory;
-import ipwrc.persistence.SubcategoryDAO;
+import ipwrc.persistence.DAO;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 
 public class SubcategoryService extends BaseService<Subcategory> {
 
-    private SubcategoryDAO dao;
-
     @Inject
-    public SubcategoryService(SubcategoryDAO dao) {
-        this.dao = dao;
+    public SubcategoryService(DAO<Subcategory> dao) {
+        super(dao);
     }
 
     public List<Subcategory> getAll() {
@@ -21,8 +18,9 @@ public class SubcategoryService extends BaseService<Subcategory> {
     }
 
     public Subcategory findByTitle(String title) {
-        Subcategory subcategory = this.dao.findByTitle(title).orElseThrow(NotFoundException::new);
+        Subcategory subcategory = this.dao.getByTitle(title);
 
+        // Check if it has a result, else throw an exception
         this.requireResult(subcategory);
 
         return subcategory;
