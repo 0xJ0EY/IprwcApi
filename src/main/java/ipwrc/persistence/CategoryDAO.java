@@ -19,6 +19,11 @@ public class CategoryDAO extends DAO<Category> {
     }
 
     @Override
+    public Category getById(int id) {
+        return this.get(id);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Category getByTitle(String title) {
         List<Category> categories = list((Query<Category>) namedQuery("Category.findByTitle")
@@ -29,4 +34,18 @@ public class CategoryDAO extends DAO<Category> {
         return categories.size() > 0 ? categories.get(0) : null;
     }
 
+    @Override
+    public void create(Category obj) {
+        this.currentSession().save(obj);
+    }
+
+    @Override
+    public void update(Category obj) {
+        this.currentSession().update(obj);
+    }
+
+    @Override
+    public void delete(Category obj) {
+        this.currentSession().delete(obj);
+    }
 }

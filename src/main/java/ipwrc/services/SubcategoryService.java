@@ -13,17 +13,4 @@ public class SubcategoryService extends BaseService<Subcategory> {
         super(dao);
     }
 
-    public List<Subcategory> getAll() {
-        return this.dao.getAll();
-    }
-
-    public Subcategory findByTitle(String title) {
-        Subcategory subcategory = this.dao.getByTitle(title);
-
-        // Check if it has a result, else throw an exception
-        this.requireResult(subcategory);
-
-        return subcategory;
-    }
-
 }

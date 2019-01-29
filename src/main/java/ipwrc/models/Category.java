@@ -1,6 +1,7 @@
 package ipwrc.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import ipwrc.helpers.TextFormatter;
 import ipwrc.resources.CategoryResource;
 import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,7 +21,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView(View.Internal.class)
+    @JsonView(View.Public.class)
     private int id;
 
     @NotEmpty
@@ -28,7 +29,6 @@ public class Category {
     @JsonView(View.Public.class)
     private String name;
 
-    @NotEmpty
     @Column(name = "title", nullable = false)
     @JsonView(View.Public.class)
     private String title;
@@ -38,4 +38,8 @@ public class Category {
     @JsonView(CategoryResource.CategoryPublicView.class)
     private Set<Subcategory> subcategories = new HashSet<>();
 
+    public void setName(String name) {
+        this.name = name;
+        this.title = TextFormatter.toTitle(name);
+    }
 }

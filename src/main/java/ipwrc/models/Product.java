@@ -1,6 +1,7 @@
 package ipwrc.models;
 
 import com.fasterxml.jackson.annotation.*;
+import ipwrc.helpers.TextFormatter;
 import ipwrc.resources.ProductResource;
 import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -78,12 +79,7 @@ public class Product {
 
     private String generateTitle(String name) {
         String brand = this.brand.getTitle();
-
-        return brand + "-" + Normalizer.normalize(name, Normalizer.Form.NFD)
-            .replaceAll("[^\\p{ASCII}]", "") // Replace to ASCII
-            .replace("[^A-Za-z0-9]", "-") // Replace all the unknown characters to '-'
-            .replace(" ", "-")
-        ;
+        return brand + "-" + TextFormatter.toTitle(name);
     }
 
     public void setName(String name) {

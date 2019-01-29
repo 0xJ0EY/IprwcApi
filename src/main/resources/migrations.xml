@@ -51,11 +51,11 @@
 
         <!-- Create the default roles -->
         <insert tableName="roles">
-            <column name="name">User</column>
+            <column name="name">user</column>
         </insert>
 
         <insert tableName="roles">
-            <column name="name">Admin</column>
+            <column name="name">admin</column>
         </insert>
 
         <!-- Give the admin user all the roles -->
@@ -95,7 +95,7 @@
                 <constraints primaryKey="true" primaryKeyName="subcategories_pkey"/>
             </column>
             <column name="fk_category" type="INTEGER(11)">
-                <constraints nullable="false" foreignKeyName="fk_categories_subcategories" references="categories(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_categories_subcategories" references="categories(id)"/>
             </column>
             <column name="name" type="VARCHAR(50)"/>
             <column name="title" type="VARCHAR(50)"/>
