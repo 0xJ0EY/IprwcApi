@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Singleton
-@Path("/subcategory/")
+@Path("/subcategories/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SubcategoryResource {
 

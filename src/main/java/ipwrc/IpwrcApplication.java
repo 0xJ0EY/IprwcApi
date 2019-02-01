@@ -8,10 +8,7 @@ import ipwrc.bundles.ConfiguredHibernateBundle;
 import ipwrc.bundles.ConfiguredMigrationBundle;
 import ipwrc.configurations.IpwrcConfiguration;
 import ipwrc.models.*;
-import ipwrc.persistence.CategoryDAO;
-import ipwrc.persistence.ProductDAO;
-import ipwrc.persistence.SubcategoryDAO;
-import ipwrc.persistence.UserDAO;
+import ipwrc.persistence.*;
 import ipwrc.filters.CORSFilter;
 import ipwrc.resources.*;
 import com.google.common.collect.ImmutableSet;
@@ -25,10 +22,7 @@ import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import ipwrc.services.CategoryService;
-import ipwrc.services.ProductService;
-import ipwrc.services.SubcategoryService;
-import ipwrc.services.UserService;
+import ipwrc.services.*;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import java.util.HashMap;
@@ -45,7 +39,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         Brand.class
     );
 
-    private enum DaoName { USER, CATEGORY, SUBCATEGORY, PRODUCT }
+    private enum DaoName { USER, CATEGORY, SUBCATEGORY, PRODUCT, BRAND }
     private HashMap<DaoName, AbstractDAO> daos = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -88,6 +82,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         this.daos.put(DaoName.CATEGORY, new CategoryDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.SUBCATEGORY, new SubcategoryDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.PRODUCT, new ProductDAO(this.userHibernateBundle.getSessionFactory()));
+        this.daos.put(DaoName.BRAND, new BrandDAO(this.userHibernateBundle.getSessionFactory()));
     }
 
     private void setupDevelopmentEnvironment(Environment environment) {
@@ -121,6 +116,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         CategoryService categoryService = new CategoryService((CategoryDAO) this.daos.get(DaoName.CATEGORY));
         SubcategoryService subcategoryService = new SubcategoryService((SubcategoryDAO) this.daos.get(DaoName.SUBCATEGORY));
         ProductService productService = new ProductService((ProductDAO) this.daos.get(DaoName.PRODUCT));
+        BrandService brandService = new BrandService((BrandDAO) this.daos.get(DaoName.BRAND));
 
         // Register the resources
         environment.jersey().register(new AuthResource(userService));
@@ -128,5 +124,6 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         environment.jersey().register(new CategoryResource(categoryService));
         environment.jersey().register(new SubcategoryResource(subcategoryService));
         environment.jersey().register(new ProductResource(productService));
+        environment.jersey().register(new BrandResource(brandService));
     }
 }

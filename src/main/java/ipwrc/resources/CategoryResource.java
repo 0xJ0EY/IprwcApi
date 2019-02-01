@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Singleton
-@Path("/category/")
+@Path("/categories/")
 @Produces(MediaType.APPLICATION_JSON)
 public class CategoryResource {
     public static class CategoryPublicView extends View.Public {}

@@ -50,7 +50,6 @@ public class ProductResource extends View.Public {
         return this.service.findById(id);
     }
 
-
     @POST
     @UnitOfWork
     @JsonView(View.Public.class)
