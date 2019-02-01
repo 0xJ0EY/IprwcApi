@@ -45,15 +45,17 @@ public class CategoryResource {
     @POST
     @UnitOfWork
     @RolesAllowed("admin")
-    public void save(@Valid Category category) {
+    public Category save(@Valid Category category) {
         this.service.create(category);
+        return category;
     }
 
     @PUT
     @UnitOfWork
     @RolesAllowed("admin")
-    public void update(@Valid Category category) {
+    public Category update(@Valid Category category) {
         this.service.update(category);
+        return category;
     }
 
     @DELETE

@@ -2,15 +2,15 @@ package ipwrc.resources;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.hibernate.UnitOfWork;
+import ipwrc.models.Category;
 import ipwrc.models.Subcategory;
 import ipwrc.services.SubcategoryService;
 import ipwrc.views.View;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -29,7 +29,6 @@ public class SubcategoryResource {
     }
 
     @GET()
-    @Path("/")
     @UnitOfWork
     @JsonView(SubcategoryPublicView.class)
     public List<Subcategory> all() {
@@ -43,5 +42,31 @@ public class SubcategoryResource {
     public Subcategory subcategory(@PathParam("subcategory") String title) {
         return this.service.findByTitle(title);
     }
+
+    @POST
+    @UnitOfWork
+    @RolesAllowed("admin")
+    public Subcategory save(@Valid Subcategory subcategory) {
+        this.service.create(subcategory);
+        return subcategory;
+    }
+
+    @PUT
+    @UnitOfWork
+    @RolesAllowed("admin")
+    public Subcategory update(@Valid Subcategory subcategory) {
+        this.service.update(subcategory);
+        return subcategory;
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @UnitOfWork
+    @RolesAllowed("admin")
+    public void delete(@PathParam("id") int id) {
+        Subcategory subcategory = this.service.findById(id);
+        this.service.delete(subcategory);
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package ipwrc.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import ipwrc.helpers.TextFormatter;
 import ipwrc.resources.CategoryResource;
@@ -13,9 +15,10 @@ import java.util.Set;
 @Entity(name = "Category")
 @Table(name = "categories")
 @NamedQueries({
-    @NamedQuery(name = "Category.getAll", query = "SELECT p FROM Category p"),
+    @NamedQuery(name = "Category.getAll", query = "SELECT p FROM Category p ORDER BY p.id ASC"),
     @NamedQuery(name = "Category.findByTitle", query = "SELECT c FROM Category c WHERE c.title =:title")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Category {
 
     @Id

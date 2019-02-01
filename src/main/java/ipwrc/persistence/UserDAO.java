@@ -18,11 +18,6 @@ public class UserDAO extends DAO<User> {
         return list((Query<User>) namedQuery("User.findAll"));
     }
 
-    @Override
-    public User getById(int id) {
-        return get(id);
-    }
-
     @SuppressWarnings("unchecked")
     public User getByUsername(String username) {
         List<User> users = list((Query<User>) namedQuery("User.findByCredentials")
