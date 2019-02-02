@@ -4,9 +4,11 @@ package ipwrc.resources;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.dropwizard.hibernate.UnitOfWork;
 import ipwrc.models.Product;
+import ipwrc.models.ProductImage;
 import ipwrc.services.ProductService;
 import ipwrc.views.View;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +31,7 @@ public class ProductResource extends View.Public {
 
     @GET
     @UnitOfWork
-    @JsonView(ProductPublicView.class)
+    @JsonView(ProductPrivateView.class)
     public List<Product> get() {
         return this.service.getAll();
     }
@@ -45,6 +47,20 @@ public class ProductResource extends View.Public {
     @GET
     @UnitOfWork
     @JsonView(ProductPrivateView.class)
+    @Path("/{title}/image/{index}")
+    @Produces({"image/png", "image/jpeg", "image/gif"})
+    public Response getImage(@PathParam("title") String title, @PathParam("index") int index) {
+        ProductImage image = this.service.getProductImage(this.service.findByTitle(title), --index);
+
+        return Response
+                .ok(image.getContent())
+                .header("Content-type", image.getMediaType())
+                .build();
+    }
+
+    @GET
+    @UnitOfWork
+    @JsonView(ProductPrivateView.class)
     @Path("/id/{id}/")
     public Product getById(@PathParam("id") int id) {
         return this.service.findById(id);
@@ -52,12 +68,28 @@ public class ProductResource extends View.Public {
 
     @POST
     @UnitOfWork
-    @JsonView(View.Public.class)
+    @RolesAllowed("admin")
     @Consumes({ MediaType.APPLICATION_JSON })
-    public Response create(Product product) {
-        System.out.println("product = " + product.subcategory);
-
+    public Product create(Product product) {
         this.service.create(product);
+        return product;
+    }
+
+    @PUT
+    @UnitOfWork
+    @RolesAllowed("admin")
+    @Consumes({ MediaType.APPLICATION_JSON })
+    public Product update(Product product) {
+        this.service.update(product);
+        return product;
+    }
+
+    @DELETE
+    @UnitOfWork
+    @RolesAllowed("admin")
+    @Consumes({ MediaType.APPLICATION_JSON })
+    public Response delete(int id) {
+        this.service.delete(this.service.findById(id));
         return Response.ok().build();
     }
 

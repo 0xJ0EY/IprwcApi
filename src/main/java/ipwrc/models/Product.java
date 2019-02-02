@@ -7,7 +7,9 @@ import ipwrc.views.View;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.text.Normalizer;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
     @NamedQuery(name = "Product.findById", query = "SELECT p FROM Product p WHERE p.id =:id"),
     @NamedQuery(name = "Product.findByTitle", query = "SELECT p FROM Product p WHERE p.title =:title")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Product {
 
@@ -50,9 +53,8 @@ public class Product {
     @JsonView(View.Public.class)
     private Brand brand;
 
-    @OneToMany()
-    @JoinColumn(name = "fk_product")
-    @JsonView(ProductResource.ProductPrivateView.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    @JsonView(View.Public.class)
     private List<ProductImage> images = new ArrayList<>();
 
     @Column(name = "description")
@@ -60,13 +62,15 @@ public class Product {
     private String description;
 
     // The price including the vat percentage
-    @NotEmpty
+    @NotNull
     @Column(name = "price")
     @JsonView(View.Public.class)
     private double price;
 
     // The amount of vat on the product
-    @NotEmpty
+    @Min(0)
+    @Max(100)
+    @NotNull
     @Column(name = "vat_percentage", nullable = false)
     @JsonView(View.Public.class)
     private int vat;
@@ -77,23 +81,44 @@ public class Product {
         return (double) Math.round((this.price / x) * 100) / 100;
     }
 
-    private String generateTitle(String name) {
-        String brand = this.brand.getTitle();
-        return brand + "-" + TextFormatter.toTitle(name);
+    @JsonView(View.Public.class)
+    public String getName() {
+        return this.name;
     }
 
     public void setName(String name) {
         this.name = name;
-        this.title = this.generateTitle(name);
+        this.setTitle(TextFormatter.toTitle(this.brand.getTitle() + " " + name));
     }
 
     @JsonView(View.Public.class)
-    public String getName() {
-        return this.name;
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 
     @JsonView(View.Public.class)
     public String getTitle() {
         return this.title;
     }
+
+    @JsonIgnore
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int findProductImageIndex(ProductImage image) {
+
+        for (int i = 0; i < this.images.size(); i++) {
+            if (image.getId() == this.images.get(i).getId())
+                return i + 1;
+        }
+
+        return -1;
+    }
+
+
 }
