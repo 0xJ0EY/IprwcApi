@@ -54,6 +54,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
     @JsonView(View.Public.class)
+    @OrderBy("id ASC")
     private List<ProductImage> images = new ArrayList<>();
 
     @Column(name = "description")
