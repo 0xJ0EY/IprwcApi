@@ -118,10 +118,10 @@
                 <constraints primaryKey="true" primaryKeyName="products_pkey"/>
             </column>
             <column name="fk_subcategory" type="INTEGER(11)">
-                <constraints nullable="false" foreignKeyName="fk_products_subcategories" references="subcategories(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_products_subcategories" references="subcategories(id)"/>
             </column>
             <column name="fk_brand" type="INTEGER(11)">
-                <constraints nullable="false" foreignKeyName="fk_products_brand" references="brands(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_products_brand" references="brands(id)"/>
             </column>
             <column name="name" type="VARCHAR(50)"/>
             <column name="title" type="VARCHAR(50)">

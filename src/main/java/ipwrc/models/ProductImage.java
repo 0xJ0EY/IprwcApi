@@ -12,7 +12,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,7 +25,7 @@ public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView(View.Internal.class)
+    @JsonView(View.Public.class)
     private int id;
 
     @ManyToOne
@@ -76,9 +75,14 @@ public class ProductImage {
         return output;
     }
 
-    @JsonView(View.Internal.class)
+    @JsonView(View.Public.class)
     public int getId() {
         return id;
+    }
+
+    @JsonIgnore
+    public void setId(int id) {
+        this.id = id;
     }
 
     @JsonView(View.Public.class)
@@ -98,11 +102,17 @@ public class ProductImage {
         return sb.toString();
     }
 
-    private String getImageName() {
+    @JsonIgnore
+    public String getImageName() {
         if (this.imageName == null || this.imageName.length() == 0)
             this.generateImageName();
 
         return imageName;
+    }
+
+    @JsonIgnore
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     /**
@@ -113,12 +123,14 @@ public class ProductImage {
         DateFormat df = new SimpleDateFormat("yyyyddMMHHmmss");
         Date now = Calendar.getInstance().getTime();
 
-        this.imageName = (df.format(now) + RandomStringUtils.randomAlphanumeric(16));
+        this.setImageName((df.format(now) + RandomStringUtils.randomAlphanumeric(16)));
     }
 
     @SuppressWarnings("unstable")
     @JsonView(View.Private.class)
     public void setContent(String content) {
+
+
         String[] parts = content.split(",");
 
         String mediaType    = parts[0].split(":")[1].split(";")[0];
@@ -127,6 +139,9 @@ public class ProductImage {
         this.setMediaType(mediaType);
 
         byte[] data = Base64.decode(base64);
+
+        // Generate a new image name
+        this.generateImageName();
 
         // Write file
         try (OutputStream os = new FileOutputStream("./images/" + this.getImageName())) {

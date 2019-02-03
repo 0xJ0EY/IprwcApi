@@ -96,8 +96,9 @@ public class ProductResource extends View.Public {
     @DELETE
     @UnitOfWork
     @RolesAllowed("admin")
+    @Path("/{id}")
     @Consumes({ MediaType.APPLICATION_JSON })
-    public Response delete(int id) {
+    public Response delete(@PathParam("id") int id) {
         this.service.delete(this.service.findById(id));
         return Response.ok().build();
     }
