@@ -73,7 +73,7 @@ public class ProductImage {
 
         if (index == -1) throw new NotFoundException();
 
-        sb.append("/api/products/");
+        sb.append("products/");
         sb.append(this.product.getTitle());
         sb.append("/image/");
         sb.append(index);

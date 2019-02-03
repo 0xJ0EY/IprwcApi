@@ -153,4 +153,41 @@
             <column name="media_type" type="VARCHAR(50)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="9" author="Joey">
+        <createTable tableName="orders">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="orders_pkey"/>
+            </column>
+            <column name="fk_user" type="INTEGER(11)">
+                <constraints nullable="true" foreignKeyName="fk_order_users" references="users(id)"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="street" type="VARCHAR(255)"/>
+            <column name="house_number" type="VARCHAR(10)"/>
+            <column name="postal_code" type="VARCHAR(10)"/>
+        </createTable>
+        
+        <createTable tableName="order_items">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="order_items_pkey"/>
+            </column>
+            <column name="fk_order" type="INTEGER(11)">
+                <constraints nullable="false" foreignKeyName="fk_order_items_orders" references="orders(id)"/>
+            </column>
+            <column name="fk_product" type="INTEGER(11)">
+                <constraints nullable="true" foreignKeyName="fk_order_items_products" references="products(id)"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="NUMBER(11,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="INTEGER(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

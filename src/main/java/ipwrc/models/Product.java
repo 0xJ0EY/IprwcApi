@@ -42,7 +42,7 @@ public class Product {
         cascade = { CascadeType.MERGE, CascadeType.PERSIST }
     )
     @JoinColumn(name = "fk_subcategory")
-    @JsonView(ProductResource.ProductPublicView.class)
+    @JsonView(ProductResource.ProductPrivateView.class)
     public Subcategory subcategory;
 
     @ManyToOne(

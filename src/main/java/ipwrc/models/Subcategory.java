@@ -40,6 +40,7 @@ public class Subcategory {
     @JsonView(SubcategoryResource.SubcategoryPublicView.class)
     private Category category;
 
+    @OrderBy("id DESC")
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_subcategory")
     @JsonView(SubcategoryResource.SubcategoryPrivateView.class)
