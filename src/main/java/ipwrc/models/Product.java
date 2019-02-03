@@ -39,21 +39,20 @@ public class Product {
 
     @ManyToOne(
         targetEntity = Subcategory.class,
-        cascade = { CascadeType.MERGE, CascadeType.PERSIST }
+        cascade = { CascadeType.PERSIST }
     )
     @JoinColumn(name = "fk_subcategory")
-    @JsonView(ProductResource.ProductPrivateView.class)
-    public Subcategory subcategory;
+    private Subcategory subcategory;
 
     @ManyToOne(
         targetEntity = Brand.class,
-        cascade = { CascadeType.MERGE, CascadeType.PERSIST }
+        cascade = { CascadeType.PERSIST }
     )
     @JoinColumn(name = "fk_brand")
     @JsonView(View.Public.class)
     private Brand brand;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
     @JsonView(View.Public.class)
     private List<ProductImage> images = new ArrayList<>();
 
@@ -83,6 +82,17 @@ public class Product {
         return price;
     }
 
+    @JsonView(ProductResource.ProductPrivateView.class)
+    @JsonProperty
+    public Subcategory getSubcategory() {
+        return subcategory;
+    }
+
+    @JsonProperty
+    public void setSubcategory(Subcategory subcategory) {
+        this.subcategory = subcategory;
+    }
+
     @JsonView(View.Public.class)
     public double getPriceWithoutVat() {
         float x = 1 + (float) this.vat / 100;
@@ -96,7 +106,9 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-        this.setTitle(TextFormatter.toTitle(this.brand.getTitle() + " " + name));
+
+        if (this.brand != null)
+            this.setTitle(TextFormatter.toTitle(this.brand.getTitle() + " " + name));
     }
 
     @JsonView(View.Public.class)

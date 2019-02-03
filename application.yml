@@ -21,12 +21,12 @@ database:
 logging:
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
-  level: INFO
+  level: DEBUG
 
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
-    ipwrc.*: DEBUG
+    ipwrc: DEBUG
 
     # Redirects SQL logs to a separate file
     org.hibernate.SQL:
