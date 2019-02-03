@@ -54,6 +54,11 @@ public class User implements Principal {
     private Set<Role> roles = new HashSet<>();
 
     @JsonView(View.Internal.class)
+    public int getId() {
+        return id;
+    }
+
+    @JsonView(View.Internal.class)
     @Override
     public String getName() {
         return this.username;

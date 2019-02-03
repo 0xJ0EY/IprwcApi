@@ -36,10 +36,12 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         Subcategory.class,
         Product.class,
         ProductImage.class,
-        Brand.class
+        Brand.class,
+        Order.class,
+        OrderItem.class
     );
 
-    private enum DaoName { USER, CATEGORY, SUBCATEGORY, PRODUCT, BRAND }
+    private enum DaoName { USER, CATEGORY, SUBCATEGORY, PRODUCT, BRAND, ORDER }
     private HashMap<DaoName, AbstractDAO> daos = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -83,6 +85,7 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         this.daos.put(DaoName.SUBCATEGORY, new SubcategoryDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.PRODUCT, new ProductDAO(this.userHibernateBundle.getSessionFactory()));
         this.daos.put(DaoName.BRAND, new BrandDAO(this.userHibernateBundle.getSessionFactory()));
+        this.daos.put(DaoName.ORDER, new OrderDAO(this.userHibernateBundle.getSessionFactory()));
     }
 
     private void setupDevelopmentEnvironment(Environment environment) {
@@ -117,6 +120,10 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         SubcategoryService subcategoryService = new SubcategoryService((SubcategoryDAO) this.daos.get(DaoName.SUBCATEGORY));
         ProductService productService = new ProductService((ProductDAO) this.daos.get(DaoName.PRODUCT));
         BrandService brandService = new BrandService((BrandDAO) this.daos.get(DaoName.BRAND));
+        OrderService orderService = new OrderService(
+                (OrderDAO) this.daos.get(DaoName.ORDER),
+                (ProductDAO) this.daos.get(DaoName.PRODUCT)
+        );
 
         // Register the resources
         environment.jersey().register(new AuthResource(userService));
@@ -125,5 +132,6 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         environment.jersey().register(new SubcategoryResource(subcategoryService));
         environment.jersey().register(new ProductResource(productService));
         environment.jersey().register(new BrandResource(brandService));
+        environment.jersey().register(new OrderResource(orderService));
     }
 }

@@ -20,6 +20,17 @@ public class ProductDAO extends DAO<Product> {
 
     @Override
     @SuppressWarnings("unchecked")
+    public Product getById(int id) {
+        List<Product> products = list((Query<Product>) namedQuery("Product.findById")
+                .setParameter("id", id)
+                .setMaxResults(1)
+        );
+
+        return products.size() > 0 ? products.get(0) : null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public Product getByTitle(String title) {
         List<Product> products = list((Query<Product>) namedQuery("Product.findByTitle")
             .setParameter("title", title.toLowerCase())

@@ -75,6 +75,14 @@ public class Product {
     @JsonView(View.Public.class)
     private int vat;
 
+    public int getId() {
+        return id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
     @JsonView(View.Public.class)
     public double getPriceWithoutVat() {
         float x = 1 + (float) this.vat / 100;
