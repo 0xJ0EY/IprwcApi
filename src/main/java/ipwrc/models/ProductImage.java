@@ -1,6 +1,7 @@
 package ipwrc.models;
 
 import com.fasterxml.jackson.annotation.*;
+import ipwrc.resources.ProductResource;
 import ipwrc.views.View;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -11,6 +12,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,6 +44,7 @@ public class ProductImage {
     private String mediaType;
 
     @JsonView(View.Internal.class)
+    @JsonIgnore
     public byte[] getContent() {
         File image = new File("./images/" + this.getImageName());
 
@@ -49,7 +52,7 @@ public class ProductImage {
 
             byte[] content = new byte[(int)image.length()];
 
-            fis.read(content);
+            int i = fis.read(content);
 
             return content;
 
@@ -57,6 +60,20 @@ public class ProductImage {
             throw new WebApplicationException(e);
         }
 
+    }
+
+    /**
+     * Send base64 images back so we can reuse the original images from the edit view
+     */
+    @JsonProperty("content")
+    @JsonView(ProductResource.ProductEditView.class)
+    private String getContentImageString() {
+        String output = "data:";
+        output += this.getMediaType();
+        output += ";base64,";
+        output += Base64.encodeBytes(this.getContent(), Base64.DONT_BREAK_LINES);
+
+        return output;
     }
 
     @JsonView(View.Internal.class)

@@ -22,6 +22,7 @@ public class ProductResource extends View.Public {
 
     public static class ProductPublicView extends View.Public {}
     public static class ProductPrivateView extends View.Private {}
+    public static class ProductEditView extends ProductPrivateView {}
 
     private ProductService service;
 
@@ -63,6 +64,14 @@ public class ProductResource extends View.Public {
     @JsonView(ProductPrivateView.class)
     @Path("/id/{id}/")
     public Product getById(@PathParam("id") int id) {
+        return this.service.findById(id);
+    }
+
+    @GET
+    @UnitOfWork
+    @JsonView(ProductEditView.class)
+    @Path("/edit/{id}")
+    public Product getEditById(@PathParam("id") int id) {
         return this.service.findById(id);
     }
 
