@@ -24,6 +24,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import ipwrc.services.*;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
 
@@ -61,7 +62,15 @@ public class IpwrcApplication extends Application<IpwrcConfiguration> {
         bootstrap.addBundle(this.userHibernateBundle);
 
         // Bootstrapping the Angular SPA
-        bootstrap.addBundle(new IndexPageBundle("/assets/index.html", ImmutableSet.of("/login", "/app/*")));
+        bootstrap.addBundle(new IndexPageBundle("/assets/index.html", ImmutableSet.of(
+                "/login",
+                "/categorie/*",
+                "/product/*",
+                "/winkelwagen",
+                "/bestellen",
+                "/bestellingen/*",
+                "/admin/*"
+        )));
         bootstrap.addBundle(new ConfiguredAssetsBundle("/assets", "/", "index.html"));
     }
 
